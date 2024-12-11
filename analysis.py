@@ -28,7 +28,7 @@ else:
     valset = st.session_state['valset']
     testset = st.session_state['testset']
 
-model = st.sidebar.selectbox(label="Model: ", options=["LSTM", "DOC", "AELSTM", "TRANSAM"])
+model = st.sidebar.selectbox(label="Model: ", options=["LSTM", "DOC", "AELSTM", "TRANSAM", "DROCC"])
 model = model.lower()
 
 threshold = st.sidebar.slider(label="threshold: ", min_value=0.001, max_value=0.05, step=0.001, value=0.01, format="%.3f" )
@@ -64,6 +64,8 @@ elif model=="aelstm":
     st.header('AutoEncoder LSTM - Reconstruction Error')
 elif model=="transam":
     st.header('Transformer TS - Prediction Error')
+elif model=="drocc":
+    st.header('LSTM-DROCC - Probability of being normal')
 
 p_values = np.load(f"pvalues/{model}.npy")
 
