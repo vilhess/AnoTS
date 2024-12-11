@@ -19,7 +19,7 @@ class PositionalEncoding(nn.Module):
         return pe + x
     
 class TransAm(nn.Module):
-    def __init__(self, embedding_dim=4, num_cont_var=4, proj_size=250, num_layers=1, dropout=0.1):
+    def __init__(self, embedding_dim=2, num_cont_var=4, proj_size=250, num_layers=1, dropout=0.1):
         super(TransAm, self).__init__()
 
         feature_size = 2*embedding_dim + num_cont_var

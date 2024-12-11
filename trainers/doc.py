@@ -14,7 +14,7 @@ from dataset import get_datasets
 from models.doc import DOC
 
 DEVICE="cuda"
-WINDOW=10
+WINDOW=32
 BATCH_SIZE=128
 LR=1e-4
 EPOCHS=150
@@ -23,7 +23,7 @@ LATENT_DIM=32
 
 trainset, valset, testset, dataset = get_datasets(window=WINDOW, lbl_as_feat=True)
 
-model = DOC(num_cont_var=4, embedding_dim=4, hidden_size=128, seq_len=WINDOW+1, latent_dim=LATENT_DIM, num_layers=2, bidirectional=True).to(DEVICE)
+model = DOC(num_cont_var=4, embedding_dim=2, hidden_size=128, seq_len=WINDOW+1, latent_dim=LATENT_DIM, num_layers=2, bidirectional=True).to(DEVICE)
 
 trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
 optimizer = optim.Adam(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)

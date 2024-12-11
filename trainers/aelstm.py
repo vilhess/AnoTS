@@ -15,14 +15,14 @@ from models.aelstm import AELSTM
 
 DEVICE="cuda"
 
-WINDOW=10
+WINDOW=32
 BATCH_SIZE=128
 LR=1e-4
 EPOCHS=150
 
 trainset, valset, testset, dataset = get_datasets(window=WINDOW, lbl_as_feat=True)
 
-model = AELSTM(num_cont_var=4, embedding_dim=4, hidden_size=128, latent_dim=64).to(DEVICE)
+model = AELSTM(num_cont_var=4, embedding_dim=2, hidden_size=128, latent_dim=64).to(DEVICE)
 
 trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
 optimizer = optim.Adam(model.parameters(), lr=LR)

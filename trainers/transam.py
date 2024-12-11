@@ -14,7 +14,7 @@ from dataset import get_datasets
 from models.transam import TransAm
 
 DEVICE="cuda"
-WINDOW=10
+WINDOW=32
 BATCH_SIZE=128
 LR=1e-4
 EPOCHS=150

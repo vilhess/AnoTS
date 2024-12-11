@@ -65,7 +65,7 @@ class Decoder(nn.Module):
     
 
 class AELSTM(nn.Module):
-    def __init__(self, num_cont_var=4, embedding_dim=4, hidden_size=128, latent_dim=64):
+    def __init__(self, num_cont_var=4, embedding_dim=2, hidden_size=128, latent_dim=64):
         super(AELSTM, self).__init__()
 
         self.encoder = Encoder(num_cont_var=num_cont_var, embedding_dim=embedding_dim, hidden_size=hidden_size, num_layers=1, bidirectional=False)

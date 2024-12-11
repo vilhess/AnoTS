@@ -14,13 +14,13 @@ from dataset import get_datasets
 from models.lstm import LSTM
 
 DEVICE="cuda"
-WINDOW=10
+WINDOW=32
 BATCH_SIZE=128
 LR=1e-4
 EPOCHS=150
 
 trainset, valset, testset, dataset = get_datasets(window=WINDOW, lbl_as_feat=False)
-model = LSTM(num_cont_var=4, embedding_dim=4, hidden_size=128, num_layers=2, bidirectional=True).to(DEVICE)
+model = LSTM(num_cont_var=4, embedding_dim=2, hidden_size=128, num_layers=2, bidirectional=True).to(DEVICE)
 
 trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
 criterion = nn.MSELoss()

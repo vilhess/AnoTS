@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn 
 
 class LSTM(nn.Module):
-    def __init__(self, num_cont_var=4, embedding_dim=4, hidden_size=128, num_layers=2, bidirectional=True):
+    def __init__(self, num_cont_var=4, embedding_dim=2, hidden_size=128, num_layers=2, bidirectional=True):
         super(LSTM, self).__init__()
 
         self.dow_embed = nn.Embedding(num_embeddings=7, embedding_dim=embedding_dim)
