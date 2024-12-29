@@ -28,7 +28,7 @@ else:
     valset = st.session_state['valset']
     testset = st.session_state['testset']
 
-model = st.sidebar.selectbox(label="Model: ", options=["LSTM", "DOC", "AELSTM", "TRANSAM", "DROCC", "TranAD", "MAD-GAN"])
+model = st.sidebar.selectbox(label="Model: ", options=["LSTM", "DOC", "AELSTM", "TRANSAM", "DROCC", "TranAD", "MAD-GAN", "PatchTST"])
 model = model.lower().replace('-', '')
 
 threshold = st.sidebar.slider(label="threshold: ", min_value=0.001, max_value=0.05, step=0.001, value=0.01, format="%.3f" )
@@ -70,6 +70,8 @@ elif model=="mad-gan":
     st.header('MAD-GAN - Normality Score')
 elif model=="tranad":
     st.header('TranAD - Normality Score')
+elif model=="patchtst":
+    st.header('PatchTST - Prediction error')
 
 p_values = np.load(f"pvalues/{model}.npy")
 

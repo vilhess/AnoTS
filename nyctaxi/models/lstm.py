@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn 
 
 class LSTM(nn.Module):
-    def __init__(self, num_cont_var=4, embedding_dim=2, hidden_size=128, num_layers=2, bidirectional=True):
+    def __init__(self, num_cont_var=4, embedding_dim=2, hidden_size=128, num_layers=2, bidirectional=True, revin=False):
         super(LSTM, self).__init__()
-
+        self.revin = revin
         self.dow_embed = nn.Embedding(num_embeddings=7, embedding_dim=embedding_dim)
         self.holiday_embed = nn.Embedding(num_embeddings=2, embedding_dim=embedding_dim)
         self.lstm = nn.LSTM(input_size=2*embedding_dim + num_cont_var, hidden_size=hidden_size, num_layers=num_layers, batch_first=True, bidirectional=bidirectional)
