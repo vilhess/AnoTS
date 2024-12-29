@@ -17,6 +17,8 @@ The models we consider are:
 - **LSTM Auto-Encoders** 
 - [**DROCC**](https://arxiv.org/abs/2002.12718)
 - [**TranAD**](https://arxiv.org/abs/2201.07284)
+- [**PatchTST**](https://arxiv.org/abs/2211.14730)
+- [**Revin Method**](https://openreview.net/forum?id=cGDAkQo1C0p)
 
 ## To-Do:
 
