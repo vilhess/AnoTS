@@ -8,7 +8,7 @@ import numpy as np
 
 #from collections import OrderedDict
 from models.patchtst.layers import *
-from models.patchtst.revin import RevIN
+from models.revin import RevIN
 
 # Cell
 class PatchTST_backbone(nn.Module):

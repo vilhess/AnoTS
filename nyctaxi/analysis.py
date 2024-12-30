@@ -15,7 +15,6 @@ st.subheader('Anomalies: NYC Marathon / Thanksgiving / Christmas / New Year / Sn
 WINDOW=10
 BATCH_SIZE=128
 
-
 if 'dataset' not in st.session_state:
     trainset, valset, testset, dataset = get_datasets(window=WINDOW, lbl_as_feat=False)
     st.session_state['dataset'] = dataset
@@ -32,6 +31,10 @@ model = st.sidebar.selectbox(label="Model: ", options=["LSTM", "DOC", "AELSTM", 
 model = model.lower().replace('-', '')
 
 threshold = st.sidebar.slider(label="threshold: ", min_value=0.001, max_value=0.05, step=0.001, value=0.01, format="%.3f" )
+
+if model in (["lstm", "transam", "patchtst"]):
+    revin = st.sidebar.checkbox("Use revin?")
+ext = "_rev" if revin else ""
 
 train_indices = dataset.train_indices
 val_indices = dataset.val_indices
@@ -50,7 +53,7 @@ anomaly_periods = dataset.anomaly_periods
 full_plot = Image.open("figures/ts.png")
 full_plot_norm = Image.open("figures/normalize_ts.png")
 valtest = Image.open("figures/valtest.png")
-prederrors = Image.open(f"figures/{model}/prederrors.png")
+prederrors = Image.open(f"figures/{model}/prederrors{ext}.png")
 
 st.image(full_plot)
 st.image(full_plot_norm)
@@ -73,7 +76,7 @@ elif model=="tranad":
 elif model=="patchtst":
     st.header('PatchTST - Prediction error')
 
-p_values = np.load(f"pvalues/{model}.npy")
+p_values = np.load(f"pvalues/{model}{ext}.npy")
 
 st.image(valtest)
 st.image(prederrors)

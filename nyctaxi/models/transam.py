@@ -1,5 +1,6 @@
 import torch 
-import torch.nn as nn 
+import torch.nn as nn
+from models.revin import RevIN
 
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, max_len=5000):
@@ -19,8 +20,11 @@ class PositionalEncoding(nn.Module):
         return pe + x
     
 class TransAm(nn.Module):
-    def __init__(self, embedding_dim=2, num_cont_var=4, proj_size=250, num_layers=1, dropout=0.1):
+    def __init__(self, embedding_dim=2, num_cont_var=4, proj_size=250, num_layers=1, dropout=0.1, revin=False):
         super(TransAm, self).__init__()
+
+        self.revin = revin
+        if self.revin: self.revin_layer = RevIN(1, affine=True, subtract_last=False)
 
         feature_size = 2*embedding_dim + num_cont_var
 
@@ -44,6 +48,11 @@ class TransAm(nn.Module):
 
     def forward(self, x_cont, x_cat):
 
+        if self.revin: 
+            amount = x_cont[:,:,0].unsqueeze(2)
+            amount = self.revin_layer(amount, 'norm')
+            x_cont[:, :, 0] = amount.squeeze(-1)
+
         x_dow = x_cat[:, :,0].int()
         x_holiday = x_cat[:, :,1].int()
 
@@ -60,7 +69,12 @@ class TransAm(nn.Module):
 
         output = self.transformer_encoder(embedded, mask)
         output = self.decoder(output)
-        return output[:,-1, :]
+        output = output[:,-1, :].unsqueeze(1)
+
+        if self.revin:
+            output = self.revin_layer(output, "denorm")
+
+        return output
     
     def _generate_square_subsequent_mask(self, sz):
         mask = (torch.tril(torch.ones(sz, sz)) == 1)

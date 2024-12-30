@@ -16,10 +16,7 @@ class TSDataset(Dataset):
             (pd.to_datetime(period["start"]), pd.to_datetime(period["end"]))
             for period in config["anomaly_periods"]
         ]
-
-        self.cont_vars = ["value", "hour_min", "gap_holiday", "t"]
-        self.cat_vars = ["day_of_week", "holiday"]
-
+        
         self.window = window
         self.lbl_as_feat = lbl_as_feat
 

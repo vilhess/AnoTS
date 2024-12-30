@@ -1,5 +1,6 @@
 import sys
-sys.path.append("/home/svilhes/Bureau/these/nyctaxi/")
+#sys.path.append("/home/svilhes/Bureau/these/nyctaxi/")
+sys.path.append("/Users/samyvilhes/Desktop/these/AnoTS/nyctaxi/") # mac
 
 import torch 
 import torch.nn as nn 
@@ -13,14 +14,17 @@ import numpy as np
 from dataset import get_datasets
 from models.transam import TransAm
 
-DEVICE="cuda"
+DEVICE="mps"
 WINDOW=32
 BATCH_SIZE=128
 LR=1e-4
 EPOCHS=150
 
+REVIN=True
+ext = "_rev" if REVIN else ""
+
 trainset, valset, testset, dataset = get_datasets(window=WINDOW, lbl_as_feat=False)
-model = TransAm().to(DEVICE)
+model = TransAm(revin=REVIN).to(DEVICE)
 
 trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
 criterion = nn.MSELoss()
@@ -33,6 +37,7 @@ for epoch in pbar:
     for x_cont, x_cat, target, anomaly in trainloader:
         x_cont, x_cat, target = x_cont.to(DEVICE), x_cat.to(DEVICE), target.unsqueeze(1).to(DEVICE)
         preds = model(x_cont, x_cat)
+        preds = preds.squeeze(2)
         loss = criterion(preds, target)
         optimizer.zero_grad()
         loss.backward()
@@ -42,7 +47,7 @@ for epoch in pbar:
     
 
 checkpoint = {"state_dict":model.state_dict()}
-torch.save(checkpoint, 'checkpoints/transam.pkl')
+# torch.save(checkpoint, f'checkpoints/transam{ext}.pkl')
 
 valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=False)
 testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=False)
@@ -54,6 +59,7 @@ with torch.no_grad():
     for x_cont, x_cat, target, anomaly in valloader:
             x_cont, x_cat, target = x_cont.to(DEVICE), x_cat.to(DEVICE), target.unsqueeze(1).to(DEVICE)
             val_preds = model(x_cont, x_cat)
+            val_preds = val_preds.squeeze(2)
             errors = torch.abs(target - val_preds)
             val_errors.append(errors)
 val_errors = torch.cat(val_errors).cpu()
@@ -65,14 +71,15 @@ model.eval()
 with torch.no_grad():
     for x_cont, x_cat, target, anomaly in testloader:
             x_cont, x_cat, target = x_cont.to(DEVICE), x_cat.to(DEVICE), target.unsqueeze(1).to(DEVICE)
-            val_preds = model(x_cont, x_cat)
-            errors = torch.abs(target - val_preds)
+            test_preds = model(x_cont, x_cat)
+            test_preds = test_preds.squeeze(2)
+            errors = torch.abs(target - test_preds)
             test_errors.append(errors)
 test_errors = torch.cat(test_errors).cpu()
 test_scores = - test_errors
 test_p_values = (1 + torch.sum(test_scores >= val_scores.squeeze(1), dim=1)) / (len(val_scores.squeeze(1)) + 1)
 
-np.save('pvalues/transam.npy', test_p_values.numpy())
+np.save(f'pvalues/transam{ext}.npy', test_p_values.numpy())
 # Visu
 train_indices = dataset.train_indices
 val_indices = dataset.val_indices
@@ -125,5 +132,5 @@ plt.xlabel('Timestamp', fontsize=14)
 plt.ylabel('Squared error', fontsize=14)
 plt.grid(True)
 
-plt.savefig('figures/transam/prederrors.png')
+plt.savefig(f'figures/transam/prederrors{ext}.png')
 plt.close()
