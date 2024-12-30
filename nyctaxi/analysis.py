@@ -31,7 +31,7 @@ model = st.sidebar.selectbox(label="Model: ", options=["LSTM", "DOC", "AELSTM", 
 model = model.lower().replace('-', '')
 
 threshold = st.sidebar.slider(label="threshold: ", min_value=0.001, max_value=0.05, step=0.001, value=0.01, format="%.3f" )
-
+revin=None
 if model in (["lstm", "transam", "patchtst"]):
     revin = st.sidebar.checkbox("Use revin?")
 ext = "_rev" if revin else ""
