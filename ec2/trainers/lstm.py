@@ -20,7 +20,7 @@ BATCH_SIZE=128
 LR=1e-4
 EPOCHS=150
 
-REVIN=True
+REVIN=False
 ext = "_rev" if REVIN else ""
 
 trainset, valset, testset, dataset = get_datasets(window=WINDOW, lbl_as_feat=False)

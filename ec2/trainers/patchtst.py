@@ -23,7 +23,7 @@ EPOCHS=100
 CONTEXT_WINDOW=10
 TARGET_WINDOW=1
 
-REVIN=False
+REVIN=True
 ext = "_rev" if REVIN else ""
 
 trainset, valset, testset, dataset = get_datasets(window=CONTEXT_WINDOW, lbl_as_feat=False)
