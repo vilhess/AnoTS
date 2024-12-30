@@ -30,6 +30,10 @@ model = st.sidebar.selectbox(label="Model: ", options=["LSTM", "DOC", "AELSTM", 
 model = model.lower().replace('-', '')
 
 threshold = st.sidebar.slider(label="threshold: ", min_value=0.0001, max_value=0.05, step=0.0001, value=0.01, format="%.4f" )
+revin=None
+if model in (["lstm", "transam", "patchtst"]):
+    revin = st.sidebar.checkbox("Use revin?")
+ext = "_rev" if revin else ""
 
 train_indices = dataset.train_indices
 val_indices = dataset.val_indices
@@ -72,7 +76,7 @@ elif model=="patchtst":
     st.header('PatchTST - Prediction error')
 
 
-p_values = np.load(f"pvalues/{model}.npy")
+p_values = np.load(f"pvalues/{model}{ext}.npy")
 
 st.image(valtest)
 st.image(prederrors)

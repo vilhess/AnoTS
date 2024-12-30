@@ -1,5 +1,5 @@
 import sys
-sys.path.append("/home/svilhes/Bureau/these/ec2/")
+sys.path.append("/home/svilhes/Bureau/these/AnoTS/ec2/")
 # sys.path.append("/Users/samyvilhes/Desktop/these/AnoTS/ec2") on personal mac
 
 import torch 
@@ -23,6 +23,9 @@ EPOCHS=100
 CONTEXT_WINDOW=10
 TARGET_WINDOW=1
 
+REVIN=False
+ext = "_rev" if REVIN else ""
+
 trainset, valset, testset, dataset = get_datasets(window=CONTEXT_WINDOW, lbl_as_feat=False)
 
 args = {
@@ -40,7 +43,7 @@ args = {
     "stride":8,
     "individual":1,
     "padding_patch":"end",
-    "revin":1,
+    "revin":int(REVIN),
     "affine":1,
     "subtract_last":0,
     "decomposition":1,
@@ -84,7 +87,7 @@ checkpoint = {
     'model':model.state_dict(),
     'args':args
     }
-torch.save(checkpoint, 'checkpoints/patchtst.pkl')
+torch.save(checkpoint, f'checkpoints/patchtst{ext}.pkl')
 
 valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=False)
 testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=False)
@@ -118,7 +121,7 @@ test_errors = torch.cat(test_errors).cpu()
 test_scores = - test_errors
 test_p_values = (1 + torch.sum(test_scores >= val_scores.squeeze(1), dim=1)) / (len(val_scores.squeeze(1)) + 1)
 
-np.save('pvalues/patchtst.npy', test_p_values.numpy())
+np.save(f'pvalues/patchtst{ext}.npy', test_p_values.numpy())
 # Visu
 train_indices = dataset.train_indices
 val_indices = dataset.val_indices
@@ -171,5 +174,5 @@ plt.xlabel('Timestamp', fontsize=14)
 plt.ylabel('Squared error', fontsize=14)
 plt.grid(True)
 
-plt.savefig('figures/patchtst/prederrors.png')
+plt.savefig(f'figures/patchtst/prederrors{ext}.png')
 plt.close()
