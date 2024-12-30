@@ -1,6 +1,6 @@
 import sys
-#sys.path.append("/home/svilhes/Bureau/these/nyctaxi/")
-sys.path.append("/Users/samyvilhes/Desktop/these/AnoTS/nyctaxi/") # mac
+sys.path.append("/home/svilhes/Bureau/these/AnoTS/nyctaxi/")
+#sys.path.append("/Users/samyvilhes/Desktop/these/AnoTS/nyctaxi/") # mac
 
 import torch 
 import torch.nn as nn 
@@ -14,11 +14,11 @@ import numpy as np
 from dataset import get_datasets
 from models.transam import TransAm
 
-DEVICE="mps"
+DEVICE="cuda"
 WINDOW=32
 BATCH_SIZE=128
 LR=1e-4
-EPOCHS=150
+EPOCHS=50
 
 REVIN=True
 ext = "_rev" if REVIN else ""
@@ -47,7 +47,7 @@ for epoch in pbar:
     
 
 checkpoint = {"state_dict":model.state_dict()}
-# torch.save(checkpoint, f'checkpoints/transam{ext}.pkl')
+torch.save(checkpoint, f'checkpoints/transam{ext}.pkl')
 
 valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=False)
 testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=False)

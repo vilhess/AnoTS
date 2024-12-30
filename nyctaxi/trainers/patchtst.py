@@ -1,6 +1,6 @@
 import sys
-#sys.path.append("/home/svilhes/Bureau/these/nyctaxi/")
-sys.path.append("/Users/samyvilhes/Desktop/these/AnoTS/nyctaxi") #on my mac
+sys.path.append("/home/svilhes/Bureau/these/AnoTS/nyctaxi/")
+#sys.path.append("/Users/samyvilhes/Desktop/these/AnoTS/nyctaxi") #on my mac
 
 import torch 
 import torch.nn as nn 
@@ -16,9 +16,9 @@ from types import SimpleNamespace
 from dataset import get_datasets
 from models.patchtst.patchtst import Model
 
-DEVICE="cpu"
+DEVICE="cuda"
 BATCH_SIZE=128
-EPOCHS=10
+EPOCHS=100
 
 CONTEXT_WINDOW=10
 TARGET_WINDOW=1
@@ -87,7 +87,7 @@ checkpoint = {
     'model':model.state_dict(),
     'args':args
     }
-#torch.save(checkpoint, f'checkpoints/patchtst{ext}.pkl')
+torch.save(checkpoint, f'checkpoints/patchtst{ext}.pkl')
 
 valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=False)
 testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=False)
