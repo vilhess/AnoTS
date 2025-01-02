@@ -40,6 +40,8 @@ class TSDataset(Dataset):
         self.anomalies = self.dataset["anomalie"].copy()
         self.dataset.drop("anomalie", axis=1, inplace=True)
 
+        self.test_anomalies = pd.to_datetime(config["anomaly_dates"])
+
     def __len__(self):
         return len(self.dataset) - self.window
 
