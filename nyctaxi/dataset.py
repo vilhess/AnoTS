@@ -7,7 +7,7 @@ class TSDataset(Dataset):
     def __init__(self, root="data", window=10, lbl_as_feat=True):
         super().__init__()
 
-        # return cont_vars (+ value if lbl as feat), cat_vars, value, if anomaly ; batch of size window
+        # return cont_vars, cat_vars, target_value, is anomaly
 
         with open(f"{root}/config.json", "r") as file:
             config = json.load(file)
@@ -38,6 +38,8 @@ class TSDataset(Dataset):
         
         self.anomalies = self.dataset["anomalie"].copy()
         self.dataset.drop("anomalie", axis=1, inplace=True)
+        
+        self.test_anomalies = pd.to_datetime(config["anomaly_dates"])
 
     def __len__(self):
         return len(self.dataset) - self.window

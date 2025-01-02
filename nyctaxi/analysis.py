@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
+import os
+from sklearn.metrics import roc_auc_score, f1_score, precision_score, recall_score
 
 from dataset import get_datasets
 
@@ -39,6 +41,43 @@ ext = "_rev" if revin else ""
 train_indices = dataset.train_indices
 val_indices = dataset.val_indices
 test_indices = dataset.test_indices
+
+test_anomalies = dataset.test_anomalies
+
+results = {}
+models = os.listdir('pvalues')
+
+for model_pval in models:
+    model_str = model_pval.split(".")[0]
+    results[model_str] = []
+
+    p_values = np.load(os.path.join('pvalues', model_pval))
+    p_values = np.squeeze(p_values)
+
+    df = pd.DataFrame({"p_values": p_values}, index=test_indices)
+    df.index = pd.to_datetime(df.index)
+
+    df['anomalie'] = 1-df.index.isin(test_anomalies).astype(int)
+
+    auc = round(roc_auc_score(df["anomalie"], df["p_values"]), 3)
+    results[model_str].append(auc)
+
+    reject = p_values<threshold
+    f1 = round(f1_score(df["anomalie"],reject), 3)
+    prec = round(precision_score(df["anomalie"], reject), 3)
+    recall = round(recall_score(df["anomalie"], reject), 3)
+
+    results[model_str].append(f1)
+    results[model_str].append(prec)
+    results[model_str].append(recall)
+
+results = pd.DataFrame(results)
+results.index = ["AUC Score", "F1 Score", "Recall", "Precision"]
+
+st.divider()
+st.header("Table of results for all models considering the current threshold")
+st.table(results)
+st.divider()
 
 traindf = dataset.dataframe[dataset.dataframe["timestamp"].isin(train_indices)]
 valdf = dataset.dataframe[dataset.dataframe["timestamp"].isin(val_indices)]
@@ -101,34 +140,3 @@ plt.ylabel('Value', fontsize=14)
 plt.grid(True)
 
 st.pyplot(fig)
-
-anomalies_detected_timestamp = testdf.index[[i for i in anomalies_indices]]
-
-periods_names = ['nyc marathon', 'thanksgiving', 'christmas', 'new year', 'snow storm']
-
-anomaly_periods = [(pd.to_datetime(start), pd.to_datetime(end)) for start, end in anomaly_periods]
-
-results = []
-for name, (start, end) in zip(periods_names, anomaly_periods):
-    anomalies_in_period = anomalies_detected_timestamp[
-        (anomalies_detected_timestamp >= start) & (anomalies_detected_timestamp <= end)
-    ]
-    
-    period_length = len(testdf.loc[start:end])
-    anomalies_in_period_count = len(anomalies_in_period)
-    
-    percentage = (anomalies_in_period_count / period_length) * 100 if period_length > 0 else 0
-
-    results.append({
-        "Period Name": name,
-        "Start Date": start.date(),
-        "End Date": end.date(),
-        "Anomalies Count": anomalies_in_period_count,
-        "Period Length": period_length,
-        "Anomalies (%)": round(percentage, 2)
-    })
-
-st.divider()
-results_df = pd.DataFrame(results)
-st.header(f'Table Results, threshold = {threshold*100}%')
-st.table(results_df)
