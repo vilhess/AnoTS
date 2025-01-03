@@ -7,9 +7,9 @@ class DOC(nn.Module):
 
         self.dow_embed = nn.Embedding(num_embeddings=7, embedding_dim=embedding_dim)
         self.holiday_embed = nn.Embedding(num_embeddings=2, embedding_dim=embedding_dim)
-        self.lstm = nn.LSTM(input_size=2*embedding_dim + num_cont_var, hidden_size=hidden_size, num_layers=num_layers, batch_first=True, bidirectional=bidirectional)
+        self.lstm = nn.LSTM(input_size=2*embedding_dim + num_cont_var, hidden_size=hidden_size, num_layers=num_layers, batch_first=True, bidirectional=bidirectional, bias=False)
         self.in_dim = (1+bidirectional)*hidden_size
-        self.fc_out = nn.Linear(in_features=self.in_dim, out_features=latent_dim)
+        self.fc_out = nn.Linear(in_features=self.in_dim, out_features=latent_dim, bias=False)
 
     def forward(self, x_cont, x_cat):
 
